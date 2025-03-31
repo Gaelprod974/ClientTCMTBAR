@@ -2,10 +2,14 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const cors = require('cors'); // Importation du module CORS
 require('dotenv').config(); // Charge les variables d'environnement depuis le fichier .env
 
 // Initialisation de l'application Express
 const app = express();
+
+// Utilisation de CORS pour permettre les requêtes venant de localhost:3000
+app.use(cors()); // Permet toutes les origines, si tu veux restreindre, tu peux spécifier origin: 'http://localhost:3000'
 
 // Middleware pour parser le corps des requêtes JSON
 app.use(bodyParser.json());
