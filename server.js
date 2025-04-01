@@ -2,26 +2,23 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-require('dotenv').config(); // Charge les variables d'environnement depuis le fichier .env
+const cors = require('cors'); // 🚀 Ajout de CORS
+require('dotenv').config(); // Charge les variables d'environnement depuis .env
 
 // Initialisation de l'application Express
 const app = express();
 
-
 // Middleware
+app.use(cors()); // 🚀 Activation de CORS
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
 
-// Connexion à MongoDB en utilisant la variable d'environnement URI_MONGO
+// Connexion à MongoDB
 mongoose.connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
-}).then(() => {
-    console.log('Connecté à MongoDB');
-}).catch(err => {
-    console.error('Erreur de connexion à MongoDB:', err);
-});
+}).then(() => console.log('✅ Connecté à MongoDB'))
+  .catch(err => console.error('❌ Erreur de connexion à MongoDB:', err));
 
 // Définition du modèle Client
 const clientSchema = new mongoose.Schema({
@@ -34,91 +31,64 @@ const clientSchema = new mongoose.Schema({
 
 const Client = mongoose.model('Client', clientSchema);
 
+// Route de test (pour vérifier si l'API tourne bien)
+app.get('/api/test', (req, res) => {
+    res.json({ message: "L'API fonctionne sur Vercel 🚀" });
+});
+
 // Route pour ajouter un client
-app.post('/clients', async (req, res) => {
-    const { nom, prenom, telephone, email, pointsFidelite } = req.body;
-    
+app.post('/api/clients', async (req, res) => {
     try {
-        const client = new Client({
-            nom,
-            prenom,
-            telephone,
-            email,
-            pointsFidelite
-        });
+        const client = new Client(req.body);
         await client.save();
         res.status(201).json(client);
     } catch (err) {
-        res.status(400).json({ message: 'Erreur lors de l\'ajout du client', error: err });
+        res.status(400).json({ message: "Erreur lors de l'ajout du client", error: err });
     }
 });
 
 // Route pour obtenir tous les clients
-app.get('/clients', async (req, res) => {
+app.get('/api/clients', async (req, res) => {
     try {
         const clients = await Client.find();
         res.status(200).json(clients);
     } catch (err) {
-        res.status(500).json({ message: 'Erreur lors de la récupération des clients', error: err });
+        res.status(500).json({ message: "Erreur lors de la récupération des clients", error: err });
     }
 });
 
 // Route pour obtenir un client par ID
-app.get('/clients/:id', async (req, res) => {
-    const { id } = req.params;
-    
+app.get('/api/clients/:id', async (req, res) => {
     try {
-        const client = await Client.findById(id);
-        if (!client) {
-            return res.status(404).json({ message: 'Client non trouvé' });
-        }
+        const client = await Client.findById(req.params.id);
+        if (!client) return res.status(404).json({ message: 'Client non trouvé' });
         res.status(200).json(client);
     } catch (err) {
-        res.status(500).json({ message: 'Erreur lors de la récupération du client', error: err });
+        res.status(500).json({ message: "Erreur lors de la récupération du client", error: err });
     }
 });
 
 // Route pour modifier un client
-app.put('/clients/:id', async (req, res) => {
-    const { id } = req.params;
-    const { nom, prenom, telephone, email, pointsFidelite } = req.body;
-    
+app.put('/api/clients/:id', async (req, res) => {
     try {
-        const client = await Client.findByIdAndUpdate(id, {
-            nom,
-            prenom,
-            telephone,
-            email,
-            pointsFidelite
-        }, { new: true });
-        
-        if (!client) {
-            return res.status(404).json({ message: 'Client non trouvé' });
-        }
-        
+        const client = await Client.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        if (!client) return res.status(404).json({ message: 'Client non trouvé' });
         res.status(200).json(client);
     } catch (err) {
-        res.status(500).json({ message: 'Erreur lors de la mise à jour du client', error: err });
+        res.status(500).json({ message: "Erreur lors de la mise à jour du client", error: err });
     }
 });
 
 // Route pour supprimer un client
-app.delete('/clients/:id', async (req, res) => {
-    const { id } = req.params;
-    
+app.delete('/api/clients/:id', async (req, res) => {
     try {
-        const client = await Client.findByIdAndDelete(id);
-        if (!client) {
-            return res.status(404).json({ message: 'Client non trouvé' });
-        }
-        res.status(200).json({ message: 'Client supprimé avec succès' });
+        const client = await Client.findByIdAndDelete(req.params.id);
+        if (!client) return res.status(404).json({ message: 'Client non trouvé' });
+        res.status(200).json({ message: "Client supprimé avec succès" });
     } catch (err) {
-        res.status(500).json({ message: 'Erreur lors de la suppression du client', error: err });
+        res.status(500).json({ message: "Erreur lors de la suppression du client", error: err });
     }
 });
 
-// Démarrage du serveur
-const port = 5000;
-app.listen(port, () => {
-    console.log(`Le serveur fonctionne sur http://localhost:${port}`);
-});
+// ✅ Exporter l'application pour Vercel
+module.exports = app;
