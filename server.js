@@ -7,14 +7,11 @@ require('dotenv').config(); // Charge les variables d'environnement depuis le fi
 // Initialisation de l'application Express
 const app = express();
 
-app.use(cors({
-    origin: '*',
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization']
-}));
-// Middleware pour parser le corps des requêtes JSON
+
+// Middleware
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cors());
 
 // Connexion à MongoDB en utilisant la variable d'environnement URI_MONGO
 mongoose.connect(process.env.MONGO_URI, {
