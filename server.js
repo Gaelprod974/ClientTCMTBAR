@@ -9,7 +9,7 @@ require('dotenv').config(); // Charge les variables d'environnement depuis le fi
 const app = express();
 
 // Utilisation de CORS pour permettre les requêtes venant de localhost:3000
-app.use(cors()); // Permet toutes les origines, si tu veux restreindre, tu peux spécifier origin: 'http://localhost:3000'
+ // Permet toutes les origines, si tu veux restreindre, tu peux spécifier origin: 'http://localhost:3000'
 
 // Middleware pour parser le corps des requêtes JSON
 app.use(bodyParser.json());
