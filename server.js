@@ -2,16 +2,16 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const cors = require('cors'); // 🚀 Ajout de CORS
-require('dotenv').config(); // Charge les variables d'environnement depuis .env
+require('dotenv').config(); // Charge les variables d'environnement depuis le fichier .env
 
 // Initialisation de l'application Express
 const app = express();
 
+
 // Middleware
-app.use(cors()); // 🚀 Activation de CORS
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
+
 
 // Connexion à MongoDB en utilisant la variable d'environnement URI_MONGO
 mongoose.connect(process.env.MONGO_URI, {
