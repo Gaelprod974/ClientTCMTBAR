@@ -126,6 +126,6 @@ app.delete('/clients/:id', async (req, res) => {
 
 // Démarrage du serveur
 const port = 5000;
-app.listen(port, () => {
-    console.log(`Le serveur fonctionne sur http://localhost:${port}`);
-});
+
+module.exports = app;
+
