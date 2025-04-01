@@ -6,7 +6,14 @@ require('dotenv').config(); // Charge les variables d'environnement depuis le fi
 
 // Initialisation de l'application Express
 const app = express();
+const cors = require('cors'); // Importer CORS
 
+
+app.use(cors({
+    origin: "https://frontendgestionclien.vercel.app", // Remplace par l'URL de ton frontend
+    methods: "GET,POST,PUT,DELETE",
+    allowedHeaders: "Content-Type,Authorization"
+}));
 
 // Middleware
 app.use(bodyParser.json());
