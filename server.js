@@ -7,8 +7,11 @@ require('dotenv').config(); // Charge les variables d'environnement depuis le fi
 // Initialisation de l'application Express
 const app = express();
 
-app.use(cors());
-
+app.use(cors({
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 // Middleware pour parser le corps des requêtes JSON
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
